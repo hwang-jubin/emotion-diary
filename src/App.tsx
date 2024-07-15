@@ -1,13 +1,20 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './page/Home';
+import Home from './pages/Home';
+import New from './pages/New';
+import Diary from './pages/Diary';
+import NotFound from './pages/NotFound';
+import Edit from './pages/Edit';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/home" element={<Home />} />
-        {/* 다른 Route들도 필요에 따라 추가 */}
+        <Route path="/" element={<Home />} />
+        <Route path="/new" element={<New />} />
+        <Route path="/diary/:id" element={<Diary />} />
+        <Route path="/edit/:id" element={<Edit />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
