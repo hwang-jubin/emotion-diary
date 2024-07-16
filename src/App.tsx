@@ -5,7 +5,8 @@ import New from './pages/New';
 import Diary from './pages/Diary';
 import NotFound from './pages/NotFound';
 import Edit from './pages/Edit';
-import { useState, useReducer, useRef } from 'react';
+import { useState, useReducer, useRef, createContext } from 'react';
+
 
 
 interface DataType {
@@ -43,7 +44,6 @@ function App() {
   const [data, dispatch] = useReducer(reducer, [] as DataType[]);
   const idRef = useRef(0);
 
-
   const onCreate = (createdDate: string, emotionId: number, content: string) => {
     dispatch({
       type: 'CREATE',
@@ -56,16 +56,25 @@ function App() {
     });
   }
 
+  const DiaryDataContext = createContext(data);
+  const DiaryDispatchContext = createContext(onCreate);
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/new" element={<New />} />
-        <Route path="/diary/:id" element={<Diary />} />
-        <Route path="/edit/:id" element={<Edit />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
+    <>
+      <DiaryDataContext.Provider value={data}>
+        <DiaryDispatchContext.Provider value={onCreate}>
+          <Router>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/new" element={<New />} />
+              <Route path="/diary/:id" element={<Diary />} />
+              <Route path="/edit/:id" element={<Edit />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Router>
+        </DiaryDispatchContext.Provider>
+      </DiaryDataContext.Provider>
+    </>
   );
 }
 export default App;
