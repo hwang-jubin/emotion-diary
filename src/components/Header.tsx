@@ -9,9 +9,9 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ title, leftChild, rightChild }) => {
     return <header className="Header">
-        <div>{title}</div>
-        <div>{leftChild}</div>
-        <div>{rightChild}</div>
+        <div className="header_left">{leftChild}</div>
+        <div className="header_center">{title}</div>
+        <div className="header_right">{rightChild}</div>
     </header>;
 };
 
