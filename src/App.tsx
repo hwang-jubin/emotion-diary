@@ -5,20 +5,13 @@ import New from './pages/New';
 import Diary from './pages/Diary';
 import NotFound from './pages/NotFound';
 import Edit from './pages/Edit';
-import { useState, useReducer, useRef, createContext } from 'react';
+import { useEffect, useReducer, useRef, createContext } from 'react';
+import { DataType } from "./type";
 
-
-
-interface DataType {
-  id: number,
-  createdDate: string,
-  emotionId: number,
-  content: string
-}
 type actionType = 'CREATE' | 'DELETE' | 'UPDATE';
 
 interface Action {
-  type: string,
+  type: actionType,
   data: Partial<DataType>
 }
 
@@ -47,6 +40,21 @@ const reducer = (state: DataType[], action: Action) => {
   return nextState;
 }
 
+// onCreate, onDelete, onUpdate 함수의 타입 정의
+type OnCreateType = (createdDate: number, emotionId: number, content: string) => void;
+type OnDeleteType = (id: number) => void;
+type OnUpdateType = (id: number, createdDate: number, emotionId: number, content: string) => void;
+
+
+// Context 생성
+export const DiaryStateContext = createContext<DataType[]>([]);
+export const DiaryDispatchContext = createContext<{ onCreate: OnCreateType, onDelete: OnDeleteType, onUpdate: OnUpdateType }>({
+  onCreate: () => { },
+  onDelete: () => { },
+  onUpdate: () => { },
+});
+
+
 
 function App() {
 
@@ -54,7 +62,7 @@ function App() {
   const idRef = useRef(0);
 
   //새 일기 추가
-  const onCreate = (createdDate: string, emotionId: number, content: string) => {
+  const onCreate = (createdDate: number, emotionId: number, content: string) => {
     dispatch({
       type: 'CREATE',
       data: {
@@ -75,23 +83,30 @@ function App() {
   };
 
   //일기 업데이트
-  const onUpdate = (id: number, createdDate: string, emotionId: number, content: string) => {
+  const onUpdate = (id: number, createdDate: number, emotionId: number, content: string) => {
     dispatch({
       type: "UPDATE",
       data: {
         id, createdDate, emotionId, content
       }
-
     })
-
   }
 
-  const DiaryDataContext = createContext(data);
-  const DiaryDispatchContext = createContext<{ onCreate: typeof onCreate, onDelete: typeof onDelete, onUpdate: typeof onUpdate }>({ onCreate, onDelete, onUpdate });
+  // 10개의 mock 데이터 생성
+  useEffect(() => {
+    const mockData: DataType = {
+      id: 1,
+      createdDate: new Date(new Date().getFullYear(), new Date().getMonth() - 1).getTime(),
+      emotionId: 1,
+      content: "일기"
+    };
+    dispatch(
+      { type: 'CREATE', data: mockData as Partial<DataType> }); // 초기 데이터로 설정
+  }, []);
 
   return (
     <>
-      <DiaryDataContext.Provider value={data}>
+      <DiaryStateContext.Provider value={data}>
         <DiaryDispatchContext.Provider value={{ onCreate, onDelete, onUpdate }}>
 
           <Routes>
@@ -103,7 +118,7 @@ function App() {
           </Routes>
 
         </DiaryDispatchContext.Provider>
-      </DiaryDataContext.Provider>
+      </DiaryStateContext.Provider>
     </>
   );
 }
