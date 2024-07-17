@@ -3,6 +3,7 @@ import Button from './Button';
 import { useNavigate } from 'react-router-dom';
 import { DataType } from '../type';
 import { useState } from 'react';
+import DiaryItem from './DiaryItem';
 
 interface DiaryListProps {
     monthlyData: DataType[];
@@ -20,7 +21,7 @@ const DiaryList: React.FC<DiaryListProps> = ({ monthlyData }) => {
 
 
     const getSortedData = (): DataType[] => {
-        return monthlyData.sort((a, b) => { // 배열을 복사하여 정렬
+        return monthlyData.sort((a, b) => {
             if (sortType === "oldest") {
                 return Number(a.createdDate) - Number(b.createdDate);
             } else {
@@ -39,6 +40,11 @@ const DiaryList: React.FC<DiaryListProps> = ({ monthlyData }) => {
                     <option value={"oldest"}>오래된 순</option>
                 </select>
                 <Button text="새 일기 쓰기" onClick={() => nav('/new')} />
+            </div>
+            <div className="list_wrapper">
+                {sortedData.map((item) => (
+                    <DiaryItem key={item.id} data={item} />
+                ))}
             </div>
         </div>
     );
