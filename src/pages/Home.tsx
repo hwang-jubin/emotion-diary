@@ -50,9 +50,8 @@ const Home: React.FC = () => {
 
     //pivotData 변경시에 Home 컴포넌트가 다시 호출되면서 해당 월의 테이터가 업데이트
 
-    const monthlyData = getMonthlyData(pivotDate, data);
+    const monthlyData: DataType[] = getMonthlyData(pivotDate, data);
 
-    console.log(monthlyData);
 
     return (
         <div>
@@ -60,7 +59,7 @@ const Home: React.FC = () => {
                 title={`${pivotDate.getFullYear()}년 ${pivotDate.getMonth() + 1}월`}
                 leftChild={<Button text={'<'} onClick={onDecreaseMonth} />}
                 rightChild={<Button text={'>'} onClick={onIncreaseMonth} />} />
-            <DiaryList />
+            <DiaryList monthlyData={monthlyData} />
         </div>
 
     )
